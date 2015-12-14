@@ -28,20 +28,35 @@ class Pump:
         return self.power*inflow
 
 
-if __name__ == '__main__':
-    pipe1 = Pipe()
-    pump1 = Pump()
-    pipe2 = Pipe()
+class Plant:
+    def __init__(self):
+        self.assets = []
 
-    plant = [pipe1, pump1, pipe2]
+    def add_asset(self, asset):
+        self.assets.append(asset)
+
+    def advance_plant(self, flow_to_plant, display=True):
+        inflow = flow_to_plant
+        for asset in self.assets:
+            outflow = asset.advance(inflow)
+            
+            if display:
+                print("{0} {1} ".format(inflow, asset.print()), end="")
+            inflow = outflow
+
+        if display:
+            print("{0}\n".format(outflow))
+
+
+
+if __name__ == '__main__':
+    plant = Plant()
+
+    plant.add_asset(Pipe())
+    plant.add_asset(Pump())
+    plant.add_asset(Pipe())
 
     flow_to_plant = 5
 
     for i in range(10):
-        inflow = flow_to_plant
-        for asset in plant:
-            outflow = asset.advance(inflow)
-            
-            print("{0} {1} ".format(inflow, asset.print()), end="")
-            inflow = outflow
-        print("{0}\n".format(outflow))
+        plant.advance_plant(flow_to_plant)
