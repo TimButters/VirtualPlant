@@ -28,7 +28,17 @@ class Pump:
         return self.power*inflow
 
 
+class Furnace:
+    """A simple furnace model"""
+    def __init__(self, temperature=500):
+        self.temperature = temperature
+
+
 class Plant:
+    """
+    A Plant is a collection of assets that are automaticaly
+    linked together
+    """
     def __init__(self):
         self.assets = []
 
