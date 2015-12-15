@@ -52,7 +52,7 @@ class Furnace:
         mass_per_unit_time_h20 = (furnace_flow/3600.0) * density_h20
         mass_per_unit_time_pro = (flow_in/3600.0) * density_pro
 
-        gamma = 1 # Don't know what this should be?? Units are 1/m
+        gamma = 1 # "Thermal Connection Constant": Don't know what this should be?? Units are 1/m
         k1 = gamma/(heat_capacity_h20*mass_per_unit_flow_h20)
         k2 = gamma/(heat_capacity_pro*mass_per_unit_flow_pro)
         k = k1 + k2
