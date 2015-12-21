@@ -12,8 +12,8 @@ class Pipe:
     def print(self):
         return "========"
 
-    def advance(self, inflow):
-        return inflow*self.integrity
+    def advance(self, inflow, intemp):
+        return inflow*self.integrity, intemp
 
 
 class Pump:
@@ -24,8 +24,8 @@ class Pump:
     def print(self):
         return "|__|"
 
-    def advance(self, inflow):
-        return self.power*inflow
+    def advance(self, inflow, intemp):
+        return self.power*inflow, intemp
 
 
 class Furnace:
@@ -44,24 +44,24 @@ class Furnace:
     def print(self):
         return "-{F}-"
 
-    def advance(self, temp_in, flow_in):
+    def advance(self, flow_in, temp_in):
         temp_in = temp_in + 273.15 # Convert from degC to K
         furnace_temp = self.temperature + 273.15
         
         # Mass per unit time converting m3/h to m3/sec
-        mass_per_unit_time_h20 = (furnace_flow/3600.0) * density_h20
-        mass_per_unit_time_pro = (flow_in/3600.0) * density_pro
+        mass_per_unit_time_h20 = (self.furnace_flow/3600.0) * self.density_h20
+        mass_per_unit_time_pro = (flow_in/3600.0) * self.density_pro
 
         gamma = 1 # "Thermal Connection Constant": Don't know what this should be?? Units are 1/m
-        k1 = gamma/(heat_capacity_h20*mass_per_unit_flow_h20)
-        k2 = gamma/(heat_capacity_pro*mass_per_unit_flow_pro)
+        k1 = gamma/(self.heat_capacity_h20*mass_per_unit_time_h20)
+        k2 = gamma/(self.heat_capacity_pro*mass_per_unit_time_pro)
         k = k1 + k2
 
         temp_out = ((temp_in*k1 + furnace_temp*k2)/k +
                    (((temp_in - furnace_temp)*k2)/k) * np.exp(-k*self.length))
  
         # Convert K to degC
-        return temp_out - 273.15
+        return flow_in, (temp_out - 273.15)
 
 
 class Plant:
@@ -69,34 +69,40 @@ class Plant:
     A Plant is a collection of assets that are automaticaly
     linked together
     """
-    def __init__(self):
+    def __init__(self, inflow, intemp):
+        self.inflow = inflow
+        self.intemp = intemp
         self.assets = []
 
     def add_asset(self, asset):
         self.assets.append(asset)
 
-    def advance_plant(self, flow_to_plant, display=True):
-        inflow = flow_to_plant
+    def advance_plant(self, display=True):
+        inflow = self.inflow
+        intemp = self.intemp
         for asset in self.assets:
-            outflow = asset.advance(inflow)
+            outflow, outtemp = asset.advance(inflow, intemp)
 
             if display:
-                print("{0} {1} ".format(inflow, asset.print()), end="")
+                print("{0}/{1} {2} ".format(inflow, intemp, asset.print()), end="")
             inflow = outflow
+            intemp = outtemp
 
         if display:
-            print("{0}\n".format(outflow))
+            print("{0}/{1}\n".format(outflow, outtemp))
 
 
 
 if __name__ == '__main__':
-    plant = Plant()
+    flow_to_plant = 5
+    temp_in = 20
+
+    plant = Plant(flow_to_plant, temp_in)
 
     plant.add_asset(Pipe())
     plant.add_asset(Pump())
     plant.add_asset(Pipe())
-
-    flow_to_plant = 5
+    plant.add_asset(Furnace())
 
     for i in range(10):
-        plant.advance_plant(flow_to_plant)
+        plant.advance_plant()
