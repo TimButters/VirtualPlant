@@ -14,4 +14,5 @@ if __name__ == '__main__':
     plant.add_asset(vp.Furnace())
 
     for i in range(10):
+        plant.assets[2].integrity = 1-(i/100)
         plant.advance_plant()
