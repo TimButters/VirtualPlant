@@ -78,8 +78,12 @@ class Plant:
     def advance_plant(self, display=True):
         inflow = self.inflow
         intemp = self.intemp
+
+        variables = []
+
         for asset in self.assets:
             outflow, outtemp = asset.advance(inflow, intemp)
+            variables.append([outflow, outtemp])
 
             if display:
                 print("{0}/{1} {2} ".format(inflow, intemp, asset.print()), end="")
@@ -88,3 +92,5 @@ class Plant:
 
         if display:
             print("{0}/{1}\n".format(outflow, outtemp))
+
+        return variables
