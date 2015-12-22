@@ -88,12 +88,12 @@ class Plant:
             variables.append([outflow, outtemp])
 
             if display:
-                print("{0}/{1} {2} ".format(inflow, intemp,
-                                            asset.print()), end="")
+                print("{0:.2f}/{1:.2f} {2} ".format(inflow, intemp,
+                                                    asset.print()), end="")
             inflow = outflow
             intemp = outtemp
 
         if display:
-            print("{0}/{1}\n".format(outflow, outtemp))
+            print("{0:.2f}/{1:.2f}\n".format(outflow, outtemp))
 
         return variables
