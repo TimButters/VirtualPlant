@@ -73,7 +73,7 @@ class Plant(Gtk.Window):
     A Plant is a collection of assets that are automaticaly
     linked together
     """
-    def __init__(self, inflow, intemp, visualise=False):
+    def __init__(self, inflow, intemp, visualise=True):
         self.inflow = inflow
         self.intemp = intemp
         self.assets = []
