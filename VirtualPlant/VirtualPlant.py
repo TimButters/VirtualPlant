@@ -130,7 +130,7 @@ class Plant(Gtk.Window):
         x_padding = 50
         x = x_padding
         for i, each in enumerate(self.assets):
-            each.display_asset(cr, x, 50)
+            each.display_asset(cr, x, 150)
             x += each.display_width + x_padding
         cr.fill()
 
