@@ -83,23 +83,28 @@ class Plant(Gtk.Window):
 
             self.set_border_width(10)
 
-            hbox = Gtk.Box(spacing=6)
-            self.add(hbox)
+            grid = Gtk.Grid()
+            self.add(grid)
 
             # Advance Button
             self.button_advance = Gtk.Button.new_with_label("Advance")
             self.button_advance.connect("clicked", self.advance_plant)
-            hbox.pack_start(self.button_advance, True, True, 0)
 
             # Fault Button
             self.button_fault = Gtk.Button.new_with_label("Introduce Fault")
             self.button_fault.connect("clicked", self.advance_plant)
-            hbox.pack_start(self.button_fault, True, True, 0)
 
             # Drawing Area
             self.da = Gtk.DrawingArea()
+            self.da.set_size_request(800, 600)
             self.da.connect("draw", self.expose)
-            hbox.pack_start(self.da, True, True, 0)
+
+            # Arrange items in a grid
+            grid.add(self.da)
+            grid.attach_next_to(self.button_fault, self.da,
+                                Gtk.PositionType.BOTTOM, 1, 1)
+            grid.attach_next_to(self.button_advance, self.button_fault,
+                                Gtk.PositionType.BOTTOM, 1, 1)
 
     def expose(self, widget, event):
         cr = widget.get_property("window").cairo_create()
