@@ -17,6 +17,7 @@ if __name__ == '__main__':
     plant.add_asset(vp.Pump())
     plant.add_asset(vp.Pipe())
     plant.add_asset(vp.Furnace())
+    plant.add_asset(vp.Pipe())
 
     # win = MyWindow()
     plant.connect("delete-event", Gtk.main_quit)
