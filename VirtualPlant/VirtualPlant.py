@@ -1,3 +1,7 @@
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
+
 import numpy as np
 
 
@@ -64,15 +68,57 @@ class Furnace:
         return flow_in, (temp_out - 273.15)
 
 
-class Plant:
+class Plant(Gtk.Window):
     """
     A Plant is a collection of assets that are automaticaly
     linked together
     """
-    def __init__(self, inflow, intemp):
+    def __init__(self, inflow, intemp, visualise=False):
         self.inflow = inflow
         self.intemp = intemp
         self.assets = []
+
+        if visualise:
+            Gtk.Window.__init__(self, title="Virtual Plant")
+
+            self.set_border_width(10)
+
+            hbox = Gtk.Box(spacing=6)
+            self.add(hbox)
+
+            # Advance Button
+            self.button_advance = Gtk.Button.new_with_label("Advance")
+            self.button_advance.connect("clicked", self.advance_plant)
+            hbox.pack_start(self.button_advance, True, True, 0)
+
+            # Fault Button
+            self.button_fault = Gtk.Button.new_with_label("Introduce Fault")
+            self.button_fault.connect("clicked", self.advance_plant)
+            hbox.pack_start(self.button_fault, True, True, 0)
+
+            # Drawing Area
+            self.da = Gtk.DrawingArea()
+            self.da.connect("draw", self.expose)
+            hbox.pack_start(self.da, True, True, 0)
+
+    def expose(self, widget, event):
+        cr = widget.get_property("window").cairo_create()
+        cr.set_source_rgb(0.6, 0.6, 0.6)
+
+        cr.rectangle(20, 20, 120, 80)
+        cr.rectangle(180, 20, 80, 80)
+        cr.fill()
+
+        cr.arc(330, 60, 40, 0, 2*np.pi)
+        cr.fill()
+
+        cr.arc(90, 160, 40, np.pi/4, np.pi)
+        cr.fill()
+
+        cr.translate(220, 180)
+        cr.scale(1, 0.7)
+        cr.arc(0, 0, 50, 0, 2*np.pi)
+        cr.fill()
 
     def add_asset(self, asset):
         self.assets.append(asset)
