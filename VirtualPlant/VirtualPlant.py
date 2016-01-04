@@ -35,7 +35,7 @@ class Pump:
         return "|__|"
 
     def display_asset(self, cr, x, y):
-        return cr.arc(x, y, self.display_width, 0, 2*np.pi)
+        return cr.arc(x+20, y+10, self.display_width, 0, 2*np.pi)
 
     def advance(self, inflow, intemp):
         return self.power*inflow, intemp
@@ -62,7 +62,8 @@ class Furnace:
         return "-{F}-"
 
     def display_asset(self, cr, x, y):
-        return cr.rectangle(x, y, self.display_width, self.display_height)
+        return cr.rectangle(x, y - self.display_height + 40,
+                            self.display_width, self.display_height)
 
     def advance(self, flow_in, temp_in):
         temp_in = temp_in + 273.15  # Convert from degC to K
@@ -130,7 +131,7 @@ class Plant(Gtk.Window):
         x_padding = 50
         x = x_padding
         for i, each in enumerate(self.assets):
-            each.display_asset(cr, x, 150)
+            each.display_asset(cr, x, 350)
             x += each.display_width + x_padding
         cr.fill()
 
