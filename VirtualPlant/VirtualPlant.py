@@ -10,6 +10,7 @@ class Pipe:
     display_width = 200.0
     display_height = 40.0
 
+    intemp = 0
     inflow = 0
     outflow = 0
     integrity = 1
@@ -18,10 +19,22 @@ class Pipe:
         return "========"
 
     def display_asset(self, cr, x, y):
+        cr.move_to(x, y + 55)
+        cr.show_text("{0:.2f}".format(self.inflow))
+
+        cr.move_to(x + (self.display_width), y + 55)
+        cr.show_text("{0:.2f}".format(self.outflow))
+
+        cr.move_to(x + (self.display_width / 2), y + 65)
+        cr.show_text("{0:.2f}".format(self.intemp))
+
         return cr.rectangle(x, y, self.display_width, self.display_height)
 
     def advance(self, inflow, intemp):
-        return inflow*self.integrity, intemp
+        self.intemp = intemp
+        self.inflow = inflow
+        self.outflow = inflow*self.integrity
+        return self.outflow, self.intemp
 
 
 class Pump:
@@ -114,7 +127,7 @@ class Plant(Gtk.Window):
 
             # Drawing Area
             self.da = Gtk.DrawingArea()
-            self.da.set_size_request(1000, 600)
+            self.da.set_size_request(1100, 600)
             self.da.connect("draw", self.expose)
 
             # Arrange items in a grid
@@ -153,6 +166,8 @@ class Plant(Gtk.Window):
                                                     asset.print()), end="")
             inflow = outflow
             intemp = outtemp
+
+        self.queue_draw()
 
         if terminal_display:
             print("{0:.2f}/{1:.2f}\n".format(outflow, outtemp))
