@@ -3,6 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 import numpy as np
+import time
 
 
 class Pipe:
@@ -123,7 +124,7 @@ class Plant(Gtk.Window):
 
             # Fault Button
             self.button_fault = Gtk.Button.new_with_label("Introduce Fault")
-            self.button_fault.connect("clicked", self.advance_plant)
+            self.button_fault.connect("clicked", self.loop_plant)
 
             # Drawing Area
             self.da = Gtk.DrawingArea()
@@ -151,7 +152,7 @@ class Plant(Gtk.Window):
     def add_asset(self, asset):
         self.assets.append(asset)
 
-    def advance_plant(self, terminal_display=True):
+    def advance_plant(self, event=0, terminal_display=True):
         inflow = self.inflow
         intemp = self.intemp
 
@@ -173,3 +174,9 @@ class Plant(Gtk.Window):
             print("{0:.2f}/{1:.2f}\n".format(outflow, outtemp))
 
         return variables
+
+    def loop_plant(self, event):
+        for i in range(10):
+            self.assets[2].integrity = self.assets[2].integrity - (i/100)
+            self.advance_plant()
+            time.sleep(1)  # Needed??
